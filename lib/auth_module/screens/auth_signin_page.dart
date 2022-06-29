@@ -25,25 +25,25 @@ class _AuthSignInPageState extends State<AuthSignInPage> {
       body: Center(
           child: TextButton(
         onPressed: () async {
-          OauthModel? oauthModel = await Navigator.push(
+          await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => const AuthWebViewPage(),
             ),
-          );
+          ).then((oauthModel) {
+            if (oauthModel != null) {
+              if (oauthModel.success) {
+                if (oauthModel.code == '' || oauthModel.code == null) {
+                  log('empty code from oauth model. Can\'t call bloc event');
+                  return;
+                }
 
-          if (oauthModel != null) {
-            if (oauthModel.success) {
-              if (oauthModel.code == '' || oauthModel.code == null) {
-                log('empty code from oauth model. Can\'t call bloc event');
-                return;
+                BlocProvider.of<AuthTokenBloc>(context).add(
+                  GetAuthTokens(code: oauthModel.code!),
+                );
               }
-
-              BlocProvider.of<AuthTokenBloc>(context).add(
-                GetAuthTokens(code: oauthModel.code!),
-              );
             }
-          }
+          });
         },
         child: const Text('Sign in'),
       )),
