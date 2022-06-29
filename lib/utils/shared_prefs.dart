@@ -27,6 +27,10 @@ class SharedPrefs {
     return _prefs.getString(key) ?? "";
   }
 
+  static int? getint(String key) {
+    return _prefs.getInt(key);
+  }
+
   static setListValue(String key, List<String> list) {
     _prefs.setStringList(key, list);
   }

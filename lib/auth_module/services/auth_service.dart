@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spotify/auth_module/auth_constants.dart';
 import 'package:spotify/auth_module/models/token_model.dart';
 import 'package:spotify/utils/helpers.dart';
@@ -48,8 +47,7 @@ class AuthService {
             AuthConstants.accessTokenKey, authTokenResponse.accessToken);
         SharedPrefs.setString(
             AuthConstants.refreshTokenKey, authTokenResponse.refreshToken);
-        SharedPrefs.setInt(
-            AuthConstants.expiresInKey, authTokenResponse.expiresIn);
+        _saveExpirationDate(authTokenResponse.expiresIn);
 
         return authTokenResponse;
       } else if (decodedBody.containsKey('message')) {
@@ -67,5 +65,30 @@ class AuthService {
       log(e.toString());
       throw CustomException(e.toString());
     }
+  }
+
+  Future refreshToken() async {}
+
+  /// Helper methods
+  _saveExpirationDate(int expiresIn) {
+    final now = DateTime.now();
+    final expirationDate = now.add(Duration(seconds: expiresIn));
+    SharedPrefs.setString(
+      AuthConstants.expiresInKey,
+      expirationDate.toIso8601String(),
+    );
+  }
+
+  bool shouldRefreshToken() {
+    final expirationDateIsoString =
+        SharedPrefs.getString(AuthConstants.expiresInKey);
+    if (expirationDateIsoString.isEmpty) {
+      throw 'Unable to get expiration token from shared prefs';
+    }
+    final expirationDate = DateTime.parse(expirationDateIsoString);
+
+    final now = DateTime.now();
+    final difference = expirationDate.difference(now);
+    return difference.inMinutes < 10;
   }
 }
