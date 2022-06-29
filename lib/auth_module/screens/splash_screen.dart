@@ -39,7 +39,9 @@ class _SplashScreenState extends State<SplashScreen> {
           child: const AuthSignInPage(),
         ),
       );
-      Navigator.push(context, route);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(context, route);
+      });
     }
   }
 

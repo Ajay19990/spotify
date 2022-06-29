@@ -28,9 +28,7 @@ class _AuthSignInPageState extends State<AuthSignInPage> {
           OauthModel? oauthModel = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) {
-                return const AuthWebViewPage();
-              },
+              builder: (context) => const AuthWebViewPage(),
             ),
           );
 

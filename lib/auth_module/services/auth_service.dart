@@ -12,15 +12,9 @@ class AuthService {
   static final instance = AuthService._privateConstructor();
 
   Future<AuthTokenResponse> getToken({required String code}) async {
-    Codec<String, String> stringToBase64 = utf8.fuse(base64);
-    const stringToEncode =
-        '${AuthConstants.clientID}:${AuthConstants.clientSecret}';
-
-    final encodedAuthHeader = stringToBase64.encode(stringToEncode);
-
     Map<String, String> headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': 'Basic $encodedAuthHeader',
+      'Authorization': 'Basic ${Helpers.encodedAuthHeader()}',
     };
 
     final body = {
@@ -47,7 +41,7 @@ class AuthService {
             AuthConstants.accessTokenKey, authTokenResponse.accessToken);
         SharedPrefs.setString(
             AuthConstants.refreshTokenKey, authTokenResponse.refreshToken);
-        _saveExpirationDate(authTokenResponse.expiresIn);
+        Helpers.saveExpirationDate(authTokenResponse.expiresIn);
 
         return authTokenResponse;
       } else if (decodedBody.containsKey('message')) {
@@ -67,18 +61,54 @@ class AuthService {
     }
   }
 
-  Future refreshToken() async {}
+  Future refreshToken() async {
+    Map<String, String> headers = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': 'Basic ${Helpers.encodedAuthHeader()}',
+    };
 
-  /// Helper methods
-  _saveExpirationDate(int expiresIn) {
-    final now = DateTime.now();
-    final expirationDate = now.add(Duration(seconds: expiresIn));
-    SharedPrefs.setString(
-      AuthConstants.expiresInKey,
-      expirationDate.toIso8601String(),
-    );
+    final body = {
+      'grant_type': 'refresh_token',
+      'refresh_token': SharedPrefs.getString(AuthConstants.refreshTokenKey),
+    };
+
+    try {
+      final resp = await http.post(
+        Uri.parse(AuthConstants.tokenApiUrl),
+        body: body,
+        headers: headers,
+      );
+
+      final Map<String, dynamic> decodedBody = jsonDecode(resp.body);
+      log('getRefreshedAccessTokenResponse: ${resp.body}');
+      if (resp.statusCode == 200) {
+        /// Success
+        final authTokenResponse = RefreshedTokenResponse.fromJson(decodedBody);
+
+        // Saving all the Auth info in Shared prefs
+        SharedPrefs.setString(
+            AuthConstants.accessTokenKey, authTokenResponse.accessToken);
+        Helpers.saveExpirationDate(authTokenResponse.expiresIn);
+
+        return authTokenResponse;
+      } else if (decodedBody.containsKey('message')) {
+        throw CustomException(decodedBody['message']);
+      } else {
+        throw CustomException('Something went wrong');
+      }
+    } on SocketException {
+      throw CustomException('No Internet connection');
+    } on HttpException {
+      throw CustomException('Something went wrong');
+    } on FormatException {
+      throw CustomException('Bad request');
+    } catch (e) {
+      log(e.toString());
+      throw CustomException(e.toString());
+    }
   }
 
+  /// Helper methods
   bool shouldRefreshToken() {
     final expirationDateIsoString =
         SharedPrefs.getString(AuthConstants.expiresInKey);

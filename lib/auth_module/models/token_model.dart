@@ -20,3 +20,23 @@ class AuthTokenResponse {
     );
   }
 }
+
+class RefreshedTokenResponse {
+  final String accessToken;
+  final int expiresIn;
+  final String tokenType;
+
+  RefreshedTokenResponse({
+    required this.accessToken,
+    required this.expiresIn,
+    required this.tokenType,
+  });
+
+  factory RefreshedTokenResponse.fromJson(Map<String, dynamic> json) {
+    return RefreshedTokenResponse(
+      accessToken: json['access_token'],
+      expiresIn: json['expires_in'],
+      tokenType: json['token_type'],
+    );
+  }
+}
