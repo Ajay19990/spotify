@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spotify/auth_module/bloc/auth_bloc.dart';
-import 'package:spotify/auth_module/models/oauth_model.dart';
 import 'package:spotify/auth_module/screens/auth_webview_page.dart';
 
 class AuthSignInPage extends StatefulWidget {

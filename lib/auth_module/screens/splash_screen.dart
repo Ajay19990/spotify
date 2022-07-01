@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spotify/auth_module/auth_constants.dart';
@@ -47,8 +49,14 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: Text('Splash screen')),
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Center(
+          child: Image.asset(
+        'images/spotify.png',
+        height: 100,
+        width: 100,
+      )),
     );
   }
 }
