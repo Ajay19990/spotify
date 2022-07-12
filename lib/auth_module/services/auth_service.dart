@@ -44,9 +44,10 @@ class AuthService {
         Helpers.saveExpirationDate(authTokenResponse.expiresIn);
 
         return authTokenResponse;
-      } else if (decodedBody.containsKey('message')) {
-        throw CustomException(decodedBody['message']);
       } else {
+        if (decodedBody.containsKey('message')) {
+          throw CustomException(decodedBody['message']);
+        }
         throw CustomException('Something went wrong');
       }
     } on SocketException {
@@ -91,9 +92,10 @@ class AuthService {
         Helpers.saveExpirationDate(authTokenResponse.expiresIn);
 
         return authTokenResponse;
-      } else if (decodedBody.containsKey('message')) {
-        throw CustomException(decodedBody['message']);
       } else {
+        if (decodedBody.containsKey('message')) {
+          throw CustomException(decodedBody['message']);
+        }
         throw CustomException('Something went wrong');
       }
     } on SocketException {

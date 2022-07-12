@@ -1,16 +1,23 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
+import 'package:spotify/auth_module/auth_constants.dart';
 import 'package:spotify/auth_module/services/auth_service.dart';
+import 'package:spotify/utils/shared_prefs.dart';
 
 /// Request Abstraction
 
 class API {
   static Future<http.Request> createRequest({
     required String url,
-    required ReqestMethod method,
+    required RequestMethod method,
     Map<String, dynamic>? body,
   }) async {
+    final accessToken = SharedPrefs.getString(AuthConstants.accessTokenKey);
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $accessToken',
+    };
+
     final uri = Uri.parse(url);
     final request = http.Request(method.name, uri);
 
@@ -18,14 +25,16 @@ class API {
       request.body = jsonEncode(body);
     }
 
-    if(AuthService.instance.shouldRefreshToken()) {
+    request.headers.addAll(headers);
+
+    if (AuthService.instance.shouldRefreshToken()) {
       await AuthService.instance.refreshToken();
     }
     return request;
   }
 }
 
-enum ReqestMethod {
+enum RequestMethod {
   get,
   post,
   put,
@@ -33,18 +42,18 @@ enum ReqestMethod {
   patch,
 }
 
-extension RequestExt on ReqestMethod {
+extension RequestExt on RequestMethod {
   String get httpMethod {
     switch (this) {
-      case ReqestMethod.get:
+      case RequestMethod.get:
         return 'GET';
-      case ReqestMethod.post:
+      case RequestMethod.post:
         return 'POST';
-      case ReqestMethod.put:
+      case RequestMethod.put:
         return 'PUT';
-      case ReqestMethod.delete:
+      case RequestMethod.delete:
         return 'DELETE';
-      case ReqestMethod.patch:
+      case RequestMethod.patch:
         return 'PATCH';
     }
   }

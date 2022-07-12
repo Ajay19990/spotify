@@ -8,7 +8,7 @@ class AuthConstants {
       "ugc-image-upload%20user-modify-playback-state%20user-read-playback-state%20user-read-currently-playing%20user-follow-modify%20user-follow-read%20user-read-recently-played%20user-read-playback-position%20user-top-read%20playlist-read-collaborative%20playlist-modify-public%20playlist-read-private%20playlist-modify-private%20app-remote-control%20streaming%20user-read-email%20user-read-private%20user-read-private%20user-library-modify%20user-library-read";
 
   static get signinInitialUrl {
-    var url =
+    const url =
         'https://accounts.spotify.com/authorize?response_type=code&client_id=${AuthConstants.clientID}&redirect_uri=${AuthConstants.redirectUrl}&scope=${AuthConstants.scopes}&show_dialog=true';
     return url;
   }

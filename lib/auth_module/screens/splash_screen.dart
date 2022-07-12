@@ -1,10 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:spotify/auth_module/auth_constants.dart';
 import 'package:spotify/auth_module/bloc/auth_bloc.dart';
 import 'package:spotify/auth_module/screens/auth_signin_page.dart';
+import 'package:spotify/home_module/screens/home_page.dart';
 import 'package:spotify/utils/shared_prefs.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -26,9 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (accessToken.isNotEmpty) {
       // We are logged in
       final route = MaterialPageRoute(
-        builder: (context) => const Scaffold(
-          backgroundColor: Colors.redAccent,
-        ),
+        builder: (context) => HomePage(),
       );
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
