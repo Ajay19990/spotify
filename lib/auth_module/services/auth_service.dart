@@ -121,6 +121,8 @@ class AuthService {
 
     final now = DateTime.now();
     final difference = expirationDate.difference(now);
-    return difference.inMinutes < 10;
+    log('expirationDate: ${expirationDate.toString()}');
+    log('difference: ${difference.inMinutes}');
+    return difference.inMinutes < 48;
   }
 }

@@ -25,8 +25,8 @@ class HomeService {
       if (resp.statusCode == 200) {
         //
       } else {
-        if (decodedBody.containsKey('message')) {
-          throw CustomException(decodedBody['message']);
+        if (decodedBody.containsKey('error')) {
+          throw CustomException(decodedBody['error']['message']);
         }
         throw CustomException('Something went wrong');
       }

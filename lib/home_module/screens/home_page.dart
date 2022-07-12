@@ -1,7 +1,5 @@
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-
 import 'package:flutter/material.dart';
+import 'package:spotify/home_module/services/home_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -14,6 +12,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    HomeService.instance.getNewReleasedAlbums();
   }
 
   @override

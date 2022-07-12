@@ -12,6 +12,11 @@ class API {
     required RequestMethod method,
     Map<String, dynamic>? body,
   }) async {
+
+    if (AuthService.instance.shouldRefreshToken()) {
+      await AuthService.instance.refreshToken();
+    }
+
     final accessToken = SharedPrefs.getString(AuthConstants.accessTokenKey);
     final headers = {
       'Content-Type': 'application/json',
@@ -26,10 +31,6 @@ class API {
     }
 
     request.headers.addAll(headers);
-
-    if (AuthService.instance.shouldRefreshToken()) {
-      await AuthService.instance.refreshToken();
-    }
     return request;
   }
 }
